@@ -6,8 +6,15 @@ import (
 	"strings"
 )
 
+func ConvertToFloat64(num interface{}) float64 {
+	if n, ok := num.(int); ok {
+		return float64(n)
+	}
+	return num.(float64)
+}
+
 func CompareNumbers(left, right interface{}) int {
-	leftNum := float64(left.(int))
+	leftNum := ConvertToFloat64(left)
 	rightNum, rightOk := right.(float64)
 	if !rightOk {
 		return 0
