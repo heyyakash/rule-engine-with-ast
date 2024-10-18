@@ -1,71 +1,129 @@
 package helpers
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Node struct {
-	Type  TokenType
-	Left  *Node
-	Right *Node
-	Value string
+	Type     string
+	Value    string
+	Left     *Node
+	Right    *Node
+	Operator string
+	Name     string
 }
 
-func Precedence(op string) int {
-	switch op {
-	case "AND":
-		return 2
-	case "OR":
-		return 1
+type Parser struct {
+	tokens []Token
+	pos    int
+}
+
+func NewParser(tokens []Token) *Parser {
+	return &Parser{tokens: tokens}
+}
+
+func (p *Parser) Peek() *Token {
+	if p.pos >= len(p.tokens) {
+		return nil
 	}
-	return 0
+	return &p.tokens[p.pos]
 }
 
-func ProcessOperator(operators *[]string, operands *[]*Node) {
-
-	op := (*operators)[len(*operators)-1]
-	*operators = (*operators)[:len(*operators)-1]
-
-	right := (*operands)[len(*operands)-1]
-	*operands = (*operands)[:len(*operands)-1]
-
-	left := (*operands)[len(*operands)-1]
-	*operands = (*operands)[:len(*operands)-1]
-
-	newNode := &Node{
-		Type:  Operator,
-		Value: op,
-		Left:  left,
-		Right: right,
+func (p *Parser) Consume() *Token {
+	if p.pos >= len(p.tokens) {
+		return nil
 	}
-
-	*operands = append(*operands, newNode)
-
+	val := &p.tokens[p.pos]
+	p.pos++
+	return val
 }
 
-func CreateAST(tokens []Token) *Node {
-	operators := []string{}
-	operands := []*Node{}
+func (p *Parser) Parse() *Node {
+	return p.parseExpression()
+}
 
-	for _, v := range tokens {
-		if v.Type == Operand {
-			operands = append(operands, &Node{Type: Operand, Value: v.Value})
-		} else if v.Type == Parenthesis {
-			if v.Value == "(" {
-				operators = append(operators, v.Value)
-			} else if v.Value == ")" {
-				for len(operators) > 0 && operators[len(operators)-1] != "(" {
-					ProcessOperator(&operators, &operands)
-				}
-				operators = operators[:len(operators)-1]
+func (p *Parser) parseExpression() *Node {
+	return p.parseAndOr()
+}
+
+func (p *Parser) parseAndOr() *Node {
+	left := p.parseCondition()
+
+	for {
+		token := p.Peek()
+		if token != nil && (token.Value == "AND" || token.Value == "OR") {
+			operator := p.Consume().Value
+			right := p.parseCondition()
+			left = &Node{
+				Type:     "LogicalExpression",
+				Operator: operator,
+				Left:     left,
+				Right:    right,
 			}
 		} else {
-			for len(operators) > 0 && Precedence(operators[len(operators)-1]) >= Precedence(v.Value) {
-				ProcessOperator(&operators, &operands)
-			}
-			operators = append(operators, v.Value)
+			break
 		}
 	}
 
-	for len(operators) > 0 {
-		ProcessOperator(&operators, &operands)
-	}
+	return left
+}
 
-	return operands[0]
+func (p *Parser) parseCondition() *Node {
+	token := p.Peek()
+	if token != nil && token.Value == "(" {
+		p.Consume()
+		expr := p.parseExpression()
+		p.Consume()
+		return expr
+	} else {
+		return p.parseComparison()
+	}
+}
+
+func (p *Parser) parseComparison() *Node {
+	left := p.parseOperand()
+	operator := p.Consume().Value
+	right := p.parseOperand()
+
+	return &Node{
+		Type:     "Comparison",
+		Operator: operator,
+		Left:     left,
+		Right:    right,
+	}
+}
+
+func (p *Parser) parseOperand() *Node {
+	token := p.Consume()
+
+	if token.Type == "Literal" {
+		return &Node{Type: "Literal", Value: strings.Trim(token.Value, "")}
+	} else if token.Type == "Identifier" {
+		return &Node{Type: "Identifier", Name: token.Value}
+	}
+	return nil
+}
+
+func PrintAST(node *Node, indent string) {
+	if node == nil {
+		return
+	}
+	fmt.Println(indent+"Type:", node.Type)
+	if node.Operator != "" {
+		fmt.Println(indent+"Operator:", node.Operator)
+	}
+	if node.Name != "" {
+		fmt.Println(indent+"Operator:", node.Operator)
+	}
+	if node.Value != "" {
+		fmt.Println(indent+"Value:", node.Value)
+	}
+	if node.Name != "" {
+		fmt.Println(indent+"Name:", node.Name)
+	}
+	fmt.Println(indent + "Left:")
+	PrintAST(node.Left, indent+"  ")
+	fmt.Println(indent + "Right:")
+	PrintAST(node.Right, indent+"  ")
 }
