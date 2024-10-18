@@ -1,71 +1,67 @@
 package helpers
 
 import (
-	"fmt"
+	"log"
 	"strconv"
+	"strings"
 )
 
-func Evalute(node *Node, data map[string]interface{}) bool {
-	if node.Type == Operand {
-		return EvaluteCondition(node.Value, data)
+func CompareNumbers(left, right interface{}) int {
+	leftNum := float64(left.(int))
+	rightNum, rightOk := right.(float64)
+	if !rightOk {
+		return 0
 	}
 
-	if node.Value == "AND" {
-		return Evalute(node.Left, data) && Evalute(node.Right, data)
-	} else if node.Value == "OR" {
-		return Evalute(node.Left, data) || Evalute(node.Right, data)
+	if leftNum > rightNum {
+		return 1
+	} else if leftNum < rightNum {
+		return -1
 	}
-
-	return false
+	return 0
 }
 
-func EvaluteCondition(condition string, data map[string]interface{}) bool {
-	var field string
-	var operator string
-	var value string
-
-	fmt.Sscanf(condition, "%s %s %s", &field, &operator, &value)
-	fieldValue, exists := data[field]
-	if !exists {
-		return false
-	}
-	switch fieldValue.(type) {
-	case int:
-		intFieldValue := fieldValue.(int)
-		intValue, err := strconv.Atoi(value)
-		if err != nil {
-			return false
+func ResolveValues(node *Node, data map[string]interface{}) interface{} {
+	if node.Type == "Identifier" {
+		return data[node.Name]
+	} else if node.Type == "Literal" {
+		if num, err := strconv.ParseFloat(node.Value, 64); err == nil {
+			return num
 		}
-		return CompareIntValues(intFieldValue, intValue, operator)
-	case string:
-		strFieldValue := fieldValue.(string)
-		return compareStringValues(strFieldValue, value, operator)
-
+		return strings.Trim(node.Value, "'")
 	}
-
-	return false
+	return nil
 }
 
-func CompareIntValues(fieldValue, comparisonValue int, operator string) bool {
-	switch operator {
-	case ">":
-		return fieldValue > comparisonValue
-	case "<":
-		return fieldValue < comparisonValue
-	case "=":
-		return fieldValue == comparisonValue
-	case "<=":
-		return fieldValue <= comparisonValue
-	case ">=":
-		return fieldValue >= comparisonValue
-	default:
-		return false
-	}
-}
+func Evaluate(node *Node, data map[string]interface{}) bool {
+	switch node.Type {
+	case "LogicalExpression":
+		left := Evaluate(node.Left, data)
+		right := Evaluate(node.Right, data)
 
-func compareStringValues(fieldValue, comparisonValue, operator string) bool {
-	if operator == "=" {
-		return fieldValue == comparisonValue
+		if node.Operator == "AND" {
+			log.Println(left, " && ", right, left && right)
+			return left && right
+		} else if node.Operator == "OR" {
+			log.Println(left, " || ", right, left || right)
+			return left || right
+		}
+
+	case "Comparison":
+		leftVal := ResolveValues(node.Left, data)
+		rightVal := ResolveValues(node.Right, data)
+
+		switch node.Operator {
+		case ">":
+			log.Print(leftVal, ">", rightVal, CompareNumbers(leftVal, rightVal))
+			return CompareNumbers(leftVal, rightVal) > 0
+		case "<":
+			log.Print(leftVal, "<", rightVal, CompareNumbers(leftVal, rightVal))
+			return CompareNumbers(leftVal, rightVal) < 0
+		case "=":
+			log.Print(leftVal, "=", rightVal, leftVal == leftVal)
+			return leftVal == rightVal
+		}
 	}
 	return false
 }
