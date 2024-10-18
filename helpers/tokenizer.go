@@ -1,99 +1,40 @@
 package helpers
 
 import (
-	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
-	"unicode"
-)
-
-type TokenType string
-
-const (
-	Operator    TokenType = "operator"
-	Operand     TokenType = "operand"
-	Parenthesis TokenType = "parenthesis"
 )
 
 type Token struct {
-	Type  TokenType
+	Type  string
 	Value string
 }
 
-func TokenizeRule(rule string) []Token {
-	tokens := []Token{}
-	var currentVal strings.Builder
+func Tokenize(rule string) []Token {
+	re := regexp.MustCompile(`\s*(\(|\)|AND|OR|>|<|=|'[^']*'|\w+)\s*`)
+	matches := re.FindAllStringSubmatch(rule, -1)
+	var tokens []Token
 
-	operatorRegex := regexp.MustCompile(`<=|>=|<|>|=`)
-
-	i := 0
-	for i < len(rule) {
-		ch := rule[i]
-
-		if unicode.IsSpace(rune(ch)) {
-			i += 1
-			continue
+	for _, match := range matches {
+		tokenValue := match[1]
+		tokenType := ""
+		switch tokenValue {
+		case "AND", "OR", ">", "<", "=":
+			tokenType = "Operator"
+		case "(", ")":
+			tokenType = "Parenthesis"
+		default:
+			if strings.HasPrefix(tokenValue, "'") && strings.HasSuffix(tokenValue, "'") {
+				tokenType = "Literal"
+			} else if _, err := strconv.Atoi(tokenValue); err == nil {
+				tokenType = "Literal"
+			} else {
+				tokenType = "Identifier"
+			}
 		}
-
-		if ch == '(' || ch == ')' {
-			if currentVal.Len() > 0 {
-				tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-				currentVal.Reset()
-			}
-			tokens = append(tokens, Token{Type: Parenthesis, Value: string(ch)})
-			i += 1
-		} else if strings.HasPrefix(rule[i:], "AND") || strings.HasPrefix(rule[i:], "OR") {
-			if currentVal.Len() > 0 {
-				tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-				currentVal.Reset()
-			}
-			if strings.HasPrefix(rule[i:], "AND") {
-				tokens = append(tokens, Token{Type: Operator, Value: "AND"})
-				i += 3
-			}
-			if strings.HasPrefix(rule[i:], "OR") {
-				tokens = append(tokens, Token{Type: Operator, Value: "OR"})
-				i += 2
-			}
-		} else if i+1 < len(rule) && operatorRegex.MatchString(rule[i:i+2]) {
-			if currentVal.Len() > 0 {
-				tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-				currentVal.Reset()
-			}
-			tokens = append(tokens, Token{Type: Operator, Value: rule[i : i+2]})
-			i += 2
-		} else if operatorRegex.MatchString(string(ch)) {
-			if currentVal.Len() > 0 {
-				tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-				currentVal.Reset()
-			}
-			tokens = append(tokens, Token{Type: Operator, Value: string(ch)})
-			i += 1
-		} else if ch == '\'' {
-			if currentVal.Len() > 0 {
-				tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-				currentVal.Reset()
-			}
-			i += 1
-			for i < len(rule) && rule[i] != '\'' {
-				currentVal.WriteRune(rune(rule[i]))
-				i += 1
-			}
-			tokens = append(tokens, Token{Type: Operand, Value: currentVal.String()})
-			currentVal.Reset()
-			i += 1
-		} else {
-			currentVal.WriteRune(rune(rule[i]))
-			i += 1
-		}
+		tokens = append(tokens, Token{Type: tokenType, Value: tokenValue})
 	}
-
-	for _, v := range tokens {
-		if v.Type == Operand {
-			fmt.Printf("%v\n", v)
-		}
-
-	}
-
 	return tokens
+
 }
