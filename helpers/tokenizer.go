@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"unicode"
@@ -85,6 +86,13 @@ func TokenizeRule(rule string) []Token {
 			currentVal.WriteRune(rune(rule[i]))
 			i += 1
 		}
+	}
+
+	for _, v := range tokens {
+		if v.Type == Operand {
+			fmt.Printf("%v\n", v)
+		}
+
 	}
 
 	return tokens
