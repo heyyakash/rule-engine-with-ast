@@ -127,3 +127,57 @@ func PrintAST(node *Node, indent string) {
 	fmt.Println(indent + "Right:")
 	PrintAST(node.Right, indent+"  ")
 }
+
+func ASTToMAp(node *Node) map[string]interface{} {
+	if node == nil {
+		return nil
+	}
+	astMap := map[string]interface{}{
+		"Type": node.Type,
+	}
+
+	if node.Name != "" {
+		astMap["Name"] = node.Name
+	}
+	if node.Value != "" {
+		astMap["Value"] = node.Value
+	}
+	if node.Operator != "" {
+		astMap["Operator"] = node.Operator
+	}
+	if node.Left != nil {
+		astMap["Left"] = ASTToMAp(node.Left)
+	}
+	if node.Right != nil {
+		astMap["Right"] = ASTToMAp(node.Right)
+	}
+
+	return astMap
+
+}
+
+func MapToAST(astMap map[string]interface{}) *Node {
+	node := &Node{
+		Type: astMap["Type"].(string),
+	}
+
+	if operator, ok := astMap["Operator"].(string); ok {
+		node.Operator = operator
+	}
+	if name, ok := astMap["Name"].(string); ok {
+		node.Name = name
+	}
+	if value, ok := astMap["Value"].(string); ok {
+		node.Value = value
+	}
+
+	if left, ok := astMap["Left"].(map[string]interface{}); ok {
+		node.Left = MapToAST(left)
+	}
+
+	if right, ok := astMap["Right"].(map[string]interface{}); ok {
+		node.Right = MapToAST(right)
+	}
+
+	return node
+}
