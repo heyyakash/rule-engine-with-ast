@@ -2,6 +2,7 @@ package configs
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
 
 	"github.com/heyyakash/rule-engine-with-ast/helpers"
@@ -17,7 +18,7 @@ var (
 func ConnectDB() {
 	connectionString := helpers.GetEnv("MONGO_URL")
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
-	opts := options.Client().ApplyURI(connectionString).SetServerAPIOptions(serverAPI)
+	opts := options.Client().ApplyURI(connectionString).SetServerAPIOptions(serverAPI).SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		panic(err)
