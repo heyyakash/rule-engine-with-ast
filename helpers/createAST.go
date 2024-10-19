@@ -128,7 +128,7 @@ func PrintAST(node *Node, indent string) {
 	PrintAST(node.Right, indent+"  ")
 }
 
-func ASTToMAp(node *Node) map[string]interface{} {
+func AstToMap(node *Node) map[string]interface{} {
 	if node == nil {
 		return nil
 	}
@@ -146,10 +146,10 @@ func ASTToMAp(node *Node) map[string]interface{} {
 		astMap["Operator"] = node.Operator
 	}
 	if node.Left != nil {
-		astMap["Left"] = ASTToMAp(node.Left)
+		astMap["Left"] = AstToMap(node.Left)
 	}
 	if node.Right != nil {
-		astMap["Right"] = ASTToMAp(node.Right)
+		astMap["Right"] = AstToMap(node.Right)
 	}
 
 	return astMap

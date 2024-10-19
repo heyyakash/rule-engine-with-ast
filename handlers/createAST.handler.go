@@ -34,7 +34,7 @@ func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 	token := helpers.Tokenize(req.Rule)
 	parser := helpers.NewParser(token)
 	ast := parser.Parse()
-	astMap := helpers.ASTToMAp(ast)
+	astMap := helpers.AstToMap(ast)
 	res, err := configs.ASTCollection.InsertOne(context.TODO(), Document{Rule: req.Rule, Tree: astMap})
 	if err != nil {
 		http.Error(w, "Internal Error Occured", http.StatusInternalServerError)

@@ -25,7 +25,7 @@ func CombineASTHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	ruleSet := helpers.GenerateSet(req.Rules)
 	ast := helpers.CombineAsT(ruleSet)
-	astMap := helpers.ASTToMAp(ast)
+	astMap := helpers.AstToMap(ast)
 	ruleString := strings.Join(ruleSet, " OR ")
 	if _, err := configs.ASTCollection.InsertOne(context.TODO(), Document{Rule: ruleString, Tree: astMap}); err != nil {
 		w.Write([]byte(fmt.Sprintf("Some error occured : %s", err)))

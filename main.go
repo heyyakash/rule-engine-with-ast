@@ -39,7 +39,7 @@ func main() {
 
 	// result := helpers.Evaluate(ast, test)
 	// fmt.Println("Evaluation Result:", result)
-	// astMap := helpers.ASTToMAp(ast)
+	// astMap := helpers.AstToMap(ast)
 	// _ = helpers.MapToAST(astMap)
 
 	configs.ConnectDB()
