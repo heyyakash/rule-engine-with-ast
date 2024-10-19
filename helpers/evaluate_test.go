@@ -1,6 +1,10 @@
-package helpers
+package helpers_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/heyyakash/rule-engine-with-ast/helpers"
+)
 
 type testcase struct {
 	Input  map[string]interface{}
@@ -27,9 +31,9 @@ func TestEvaluation(t *testing.T) {
 			Expect: false,
 		},
 	}
-	ast := MapToAST(TestOutputMap)
+	ast := helpers.MapToAST(TestOutputMap)
 	for _, tc := range testcases {
-		if Evaluate(ast, tc.Input) != tc.Expect {
+		if helpers.Evaluate(ast, tc.Input) != tc.Expect {
 			t.Error("Evaluation failing to evaluate the ast correctly")
 		}
 	}

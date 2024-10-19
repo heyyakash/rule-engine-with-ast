@@ -1,9 +1,11 @@
-package helpers
+package helpers_test
 
 import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/heyyakash/rule-engine-with-ast/helpers"
 )
 
 var TestOutputMap = map[string]interface{}{
@@ -101,9 +103,9 @@ var TestOutputMap = map[string]interface{}{
 
 func TestCreateAST(t *testing.T) {
 	testRule := "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)"
-	tokens := Tokenize(testRule)
-	parser := NewParser(tokens)
-	astMap := AstToMap(parser.Parse())
+	tokens := helpers.Tokenize(testRule)
+	parser := helpers.NewParser(tokens)
+	astMap := helpers.AstToMap(parser.Parse())
 	if !CompareASTMap(astMap, TestOutputMap) {
 		t.Error("AST creation did not yield expected result")
 	}

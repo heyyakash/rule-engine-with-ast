@@ -184,7 +184,8 @@ func MapToAST(astMap map[string]interface{}) *Node {
 
 func CombineAsT(rules []string) *Node {
 	var nodes []*Node
-	for _, rule := range rules {
+	ruleSet := GenerateSet(rules)
+	for _, rule := range ruleSet {
 		tokens := Tokenize(rule)
 		parser := NewParser(tokens)
 		n := parser.Parse()
