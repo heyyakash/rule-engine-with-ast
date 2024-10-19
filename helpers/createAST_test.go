@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var testOutputMap = map[string]interface{}{
+var TestOutputMap = map[string]interface{}{
 	"Type":     "LogicalExpression",
 	"Operator": "AND",
 	"Left": map[string]interface{}{
@@ -104,7 +104,7 @@ func TestCreateAST(t *testing.T) {
 	tokens := Tokenize(testRule)
 	parser := NewParser(tokens)
 	astMap := AstToMap(parser.Parse())
-	if !CompareASTMap(astMap, testOutputMap) {
+	if !CompareASTMap(astMap, TestOutputMap) {
 		t.Error("AST creation did not yield expected result")
 	}
 
