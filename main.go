@@ -11,6 +11,7 @@ import (
 func startServer() {
 	http.HandleFunc("/create", handlers.CreateASTHandler)
 	http.HandleFunc("/evaluate", handlers.EvaluateASTHandler)
+	http.HandleFunc("/combine", handlers.CombineASTHandler)
 	log.Print("Server Started")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("Couldn't start server , ", err)

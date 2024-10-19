@@ -181,3 +181,39 @@ func MapToAST(astMap map[string]interface{}) *Node {
 
 	return node
 }
+
+func CombineAsT(rules []string) *Node {
+	var nodes []*Node
+	for _, rule := range rules {
+		tokens := Tokenize(rule)
+		parser := NewParser(tokens)
+		n := parser.Parse()
+		nodes = append(nodes, n)
+	}
+
+	combinedAST := MergeALLAST(nodes)
+	return combinedAST
+}
+
+func MergeALLAST(nodes []*Node) *Node {
+	if len(nodes) == 0 {
+		return nil
+	}
+
+	if len(nodes) == 1 {
+		return nodes[0]
+	}
+
+	combined := nodes[0]
+
+	for i := 1; i < len(nodes); i++ {
+		combined = &Node{
+			Type:     "LogicalExpression",
+			Left:     combined,
+			Right:    nodes[i],
+			Operator: "OR",
+		}
+	}
+
+	return combined
+}
