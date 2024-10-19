@@ -65,7 +65,7 @@ async function addRule() {
         },
         body: JSON.stringify({ rule: rule })
     })
-    await res.text()
+    const result = await res.text()
     if (res.ok) {
         alert('Rule added successfully!');
         latestRuleId = ruleInput.value;
@@ -73,7 +73,7 @@ async function addRule() {
         document.getElementById('combineSection').style.display = 'block';
         fetchRules();
     } else {
-        alert("Error Adding rule")
+        alert(result)
     }
 }
 

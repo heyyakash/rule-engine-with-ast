@@ -19,9 +19,6 @@ type Document struct {
 	Tree map[string]interface{} `json:"tree"`
 }
 
-type response struct {
-}
-
 func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var req CreateRequest
@@ -30,7 +27,10 @@ func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Couldn't parse data", http.StatusBadRequest)
 		return
 	}
-
+	if req.Rule[0] != '(' || req.Rule[len(req.Rule)-1] != ')' {
+		http.Error(w, "Rule should start with ( and end with )", http.StatusBadRequest)
+		return
+	}
 	token := helpers.Tokenize(req.Rule)
 	parser := helpers.NewParser(token)
 	ast := parser.Parse()
