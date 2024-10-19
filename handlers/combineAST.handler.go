@@ -23,9 +23,10 @@ func CombineASTHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Couldn't parse data"))
 		return
 	}
-	ast := helpers.CombineAsT(req.Rules)
+	ruleSet := helpers.GenerateSet(req.Rules)
+	ast := helpers.CombineAsT(ruleSet)
 	astMap := helpers.ASTToMAp(ast)
-	ruleString := strings.Join(req.Rules, " OR ")
+	ruleString := strings.Join(ruleSet, " OR ")
 	if _, err := configs.ASTCollection.InsertOne(context.TODO(), Document{Rule: ruleString, Tree: astMap}); err != nil {
 		w.Write([]byte(fmt.Sprintf("Some error occured : %s", err)))
 		return

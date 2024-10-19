@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"log"
 	"strconv"
 	"strings"
 )
@@ -47,10 +46,8 @@ func Evaluate(node *Node, data map[string]interface{}) bool {
 		right := Evaluate(node.Right, data)
 
 		if node.Operator == "AND" {
-			log.Println(left, " && ", right, left && right)
 			return left && right
 		} else if node.Operator == "OR" {
-			log.Println(left, " || ", right, left || right)
 			return left || right
 		}
 
@@ -60,13 +57,10 @@ func Evaluate(node *Node, data map[string]interface{}) bool {
 
 		switch node.Operator {
 		case ">":
-			log.Print(leftVal, ">", rightVal, CompareNumbers(leftVal, rightVal))
 			return CompareNumbers(leftVal, rightVal) > 0
 		case "<":
-			log.Print(leftVal, "<", rightVal, CompareNumbers(leftVal, rightVal))
 			return CompareNumbers(leftVal, rightVal) < 0
 		case "=":
-			log.Print(leftVal, "=", rightVal, leftVal == leftVal)
 			return leftVal == rightVal
 		}
 	}

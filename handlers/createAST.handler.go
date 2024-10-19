@@ -3,11 +3,11 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/heyyakash/rule-engine-with-ast/configs"
 	"github.com/heyyakash/rule-engine-with-ast/helpers"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CreateRequest struct {
@@ -19,12 +19,15 @@ type Document struct {
 	Tree map[string]interface{} `json:"tree"`
 }
 
+type response struct {
+}
+
 func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var req CreateRequest
 	defer r.Body.Close()
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		w.Write([]byte("Couldn't parse data"))
+		http.Error(w, "Couldn't parse data", http.StatusBadRequest)
 		return
 	}
 
@@ -32,11 +35,12 @@ func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 	parser := helpers.NewParser(token)
 	ast := parser.Parse()
 	astMap := helpers.ASTToMAp(ast)
-	if _, err := configs.ASTCollection.InsertOne(context.TODO(), Document{Rule: req.Rule, Tree: astMap}); err != nil {
-		w.Write([]byte(fmt.Sprintf("Some error occured : %s", err)))
+	res, err := configs.ASTCollection.InsertOne(context.TODO(), Document{Rule: req.Rule, Tree: astMap})
+	if err != nil {
+		http.Error(w, "Internal Error Occured", http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte("Rule Added Sucessfully"))
+	w.Write([]byte(res.InsertedID.(primitive.ObjectID).Hex()))
 
 }
