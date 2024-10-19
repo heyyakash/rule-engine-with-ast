@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -12,7 +13,7 @@ type Token struct {
 }
 
 func Tokenize(rule string) []Token {
-	re := regexp.MustCompile(`\s*(\(|\)|AND|OR|>|<|=|'[^']*'|\w+)\s*`)
+	re := regexp.MustCompile(`\s*(\(|\)|AND|OR|>=|<=|>|<|=|'[^']*'|\w+)\s*`)
 	matches := re.FindAllStringSubmatch(rule, -1)
 	var tokens []Token
 
@@ -20,7 +21,7 @@ func Tokenize(rule string) []Token {
 		tokenValue := match[1]
 		tokenType := ""
 		switch tokenValue {
-		case "AND", "OR", ">", "<", "=":
+		case "AND", "OR", ">", "<", "=", ">=", "<=":
 			tokenType = "Operator"
 		case "(", ")":
 			tokenType = "Parenthesis"
@@ -34,6 +35,10 @@ func Tokenize(rule string) []Token {
 			}
 		}
 		tokens = append(tokens, Token{Type: tokenType, Value: tokenValue})
+	}
+
+	for _, v := range tokens {
+		fmt.Println(v)
 	}
 	return tokens
 

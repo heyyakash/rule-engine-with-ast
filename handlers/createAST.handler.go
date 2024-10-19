@@ -27,8 +27,8 @@ func CreateASTHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Couldn't parse data", http.StatusBadRequest)
 		return
 	}
-	if req.Rule[0] != '(' || req.Rule[len(req.Rule)-1] != ')' {
-		http.Error(w, "Rule should start with ( and end with )", http.StatusBadRequest)
+	if err := helpers.ValidateRule(req.Rule); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	token := helpers.Tokenize(req.Rule)

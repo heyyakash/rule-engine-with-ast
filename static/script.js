@@ -23,7 +23,7 @@ function fetchRules() {
                 ruleBox.appendChild(ruleHeader);
 
                 const jsonInput = document.createElement('textarea');
-                jsonInput.placeholder = 'Enter JSON data';
+                jsonInput.placeholder = 'Enter JSON data. Eg {"age":31, "gender":"male"}';
                 ruleBox.appendChild(jsonInput);
 
                 const testButton = document.createElement('button');
@@ -96,6 +96,8 @@ function testRule(ruleId, jsonData, ruleBox) {
         .then(response => response.json())
         .then(result => {
             const resultDiv = ruleBox.querySelector('.rule-result');
+            if(!result.result) resultDiv.style.color = "red"
+            if(result.result) resultDiv.style.color = "green"
             resultDiv.textContent = `Result: ${result.result}`;
         })
         .catch(error => console.error('Error evaluating rule:', error));

@@ -24,6 +24,12 @@ func CombineASTHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ruleSet := helpers.GenerateSet(req.Rules)
+	for _, v := range ruleSet {
+		if err := helpers.ValidateRule(v); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
 	ast := helpers.CombineAsT(ruleSet)
 	astMap := helpers.AstToMap(ast)
 	ruleString := strings.Join(ruleSet, " OR ")

@@ -27,6 +27,32 @@ func CompareNumbers(left, right interface{}) int {
 	return 0
 }
 
+func CompareLessThanEqual(left, right interface{}) int {
+	leftNum := ConvertToFloat64(left)
+	rightNum, rightOk := right.(float64)
+	if !rightOk {
+		return 0
+	}
+
+	if leftNum <= rightNum {
+		return 1
+	}
+	return -1
+}
+
+func CompareGreaterThanEqual(left, right interface{}) int {
+	leftNum := ConvertToFloat64(left)
+	rightNum, rightOk := right.(float64)
+	if !rightOk {
+		return 0
+	}
+
+	if leftNum >= rightNum {
+		return 1
+	}
+	return -1
+}
+
 func ResolveValues(node *Node, data map[string]interface{}) interface{} {
 	if node.Type == "Identifier" {
 		return data[node.Name]
@@ -62,6 +88,10 @@ func Evaluate(node *Node, data map[string]interface{}) bool {
 			return CompareNumbers(leftVal, rightVal) < 0
 		case "=":
 			return leftVal == rightVal
+		case ">=":
+			return CompareGreaterThanEqual(leftVal, rightVal) > 0
+		case "<=":
+			return CompareLessThanEqual(leftVal, rightVal) > 0
 		}
 	}
 	return false
