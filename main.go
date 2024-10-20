@@ -26,22 +26,6 @@ func startServer() {
 }
 
 func main() {
-	// rule := "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing'))"
-	// tokens := helpers.Tokenize(rule)
-	// parser := helpers.NewParser(tokens)
-	// ast := parser.Parse()
-	// test := map[string]interface{}{
-	// 	"age":        31,
-	// 	"department": "Sales",
-	// 	"salary":     5000000,
-	// 	"experience": 8,
-	// }
-
-	// result := helpers.Evaluate(ast, test)
-	// fmt.Println("Evaluation Result:", result)
-	// astMap := helpers.AstToMap(ast)
-	// _ = helpers.MapToAST(astMap)
-
 	configs.ConnectDB()
 	startServer()
 }

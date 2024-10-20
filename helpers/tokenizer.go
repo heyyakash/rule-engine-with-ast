@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -37,9 +36,6 @@ func Tokenize(rule string) []Token {
 		tokens = append(tokens, Token{Type: tokenType, Value: tokenValue})
 	}
 
-	for _, v := range tokens {
-		fmt.Println(v)
-	}
 	return tokens
 
 }
