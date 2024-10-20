@@ -65,7 +65,15 @@ This application serves as a Rule Based Engine for validating information throug
 3. MongoDB Atlas cluster [How to create MongoDb Altas Cluster?](https://www.mongodb.com/docs/guides/atlas/cluster/)
 4. MongoDB Connection string [How to get MongoDB connection string?](https://www.geeksforgeeks.org/how-to-get-the-database-url-in-mongodb/)
 
-## How to run the application through go compiler
+## Running the Application
+### Setting up MongoDB
+The application requires MongoDB Connection string.
+#### Using MongoDB Atlas
+- After creating a cluster on MongoDB Atlas, click on connect and select Connect with driver
+- Copy the connection string from there and paste into the .env file
+- Remember to fill all the fields in the connection string (it requries password to be embedded in it)
+
+### How to run the application through go compiler
 1. Clone this repository
 2. Open the project directory locally
 3. Create a `.env` file.
@@ -96,7 +104,7 @@ This application serves as a Rule Based Engine for validating information throug
     ```
 9. Head over to `http://localhost:8080/static/` to launch the web interface
 
-## How to run the application through Docker
+### How to run the application through Docker
 1. Clone this repository
 2. Open the project directory locally
 3. Create a `.env` file.
