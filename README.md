@@ -125,4 +125,9 @@ This application serves as a Rule Based Engine for validating information throug
 
 ## Screenshots
 ### Web Interface
+![Screenshot from 2024-10-20 00-28-46](https://github.com/user-attachments/assets/789b23be-67f6-4734-a39b-028fd1263eca)
+### Data Evaluation
+![Screenshot from 2024-10-20 10-33-45](https://github.com/user-attachments/assets/a7d80ce1-17fd-41b9-b7c7-daa1fb715a13)
+![Screenshot from 2024-10-20 10-34-02](https://github.com/user-attachments/assets/513d3ddf-a6e1-4564-bccd-75e939d12a3e)
+
 
